@@ -1,4 +1,4 @@
---create table
+-- create table
 
 CREATE TABLE IF NOT EXISTS users (
 	id INT NOT NULL AUTO_INCREMENT,
