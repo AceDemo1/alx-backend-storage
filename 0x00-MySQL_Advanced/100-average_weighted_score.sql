@@ -1,15 +1,23 @@
--- Creates a stored procedure ComputeAverageWeightedScoreForUser that computes and store the average weighted score for a student
-DELIMITER $$
-DROP PROCEDURE IF EXISTS ComputeAverageWeightedScoreForUser;
-CREATE PROCEDURE ComputeAverageWeightedScoreForUser (
-	    IN user_id INT
-)
+-- create procedure
+
+DELIMITER $
+CREATE PROCEDURE ComputeAverageWeightedScoreForUser(IN user_id INT)
 BEGIN
-	    DECLARE average_weighted FLOAT;
-	    SELECT SUM(score * weight) / SUM(weight) INTO average_weighted
-	    FROM corrections
-	    JOIN projects ON corrections.project_id = projects.id
-	    WHERE corrections.user_id = user_id;
-	    UPDATE users SET average_score = average_weighted WHERE id = user_id;
-END$$
+        DECLARE NUM FLOAT;
+        DECLARE DEMU FLOAT;
+
+	SELECT SUM(score * weight) INTO NUM FROM corrections
+	JOIN projects ON corrections.project_id=projects.id
+	WHERE corrections.user_id=user_id;
+
+	SELECT SUM(weight) INTO DEMU FROM projects
+	JOIN corrections ON projects.id=corrections.project_id
+	WHERE corrections.user_id=user_id;
+	
+	IF DEMU <= 0 THEN
+		UPDATE users SET average_score = 0 WHERE id = user_id;
+	ELSE
+		UPDATE users SET average_score = NUM / DEMU WHERE id = user_id;
+	END IF; 
+END $
 DELIMITER ;

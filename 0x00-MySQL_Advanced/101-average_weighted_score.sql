@@ -1,46 +1,30 @@
+-- create procedure
 
-DELIMITER $$
-
-DROP PROCEDURE IF EXISTS ComputeAverageWeightedScoreForUsers;
-CREATE PROCEDURE ComputeAverageWeightedScoreForUsers ()
+DELIMITER $
+CREATE PROCEDURE ComputeAverageWeightedScoreForUser()
 BEGIN
-    DECLARE done INT DEFAULT 0;
-    DECLARE user_id INT;
-    DECLARE total_score FLOAT;
-    DECLARE total_weight FLOAT;
-    DECLARE average_weighted FLOAT;
+        DECLARE NUM FLOAT;
+        DECLARE DEMU FLOAT;
+	DECLARE user_id INT DEFAULT 1;
+	DECLARE total_users INT DEFAULT 0;
 
-    -- Declare a cursor to iterate over each user
-    DECLARE user_cursor CURSOR FOR SELECT id FROM users;
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+	SELECT COUNT(*) INTO total_users FROM users;
+	WHILE user_id <= total_users DO
 
-    OPEN user_cursor;
+		SELECT SUM(score * weight) INTO NUM FROM corrections
+		JOIN projects ON corrections.project_id=projects.id
+		WHERE corrections.user_id=user_id;
 
-    read_loop: LOOP
-        FETCH user_cursor INTO user_id;
-        IF done THEN
-            LEAVE read_loop;
-        END IF;
-
-        -- Calculate the total weighted score and total weight for this user
-        SELECT SUM(c.score * p.weight), SUM(p.weight) INTO total_score, total_weight
-        FROM corrections c
-        JOIN projects p ON c.project_id = p.id
-        WHERE c.user_id = user_id;
-
-        -- Calculate the average weighted score if total_weight is not zero
-        IF total_weight > 0 THEN
-            SET average_weighted = total_score / total_weight;
-        ELSE
-            SET average_weighted = 0;
-        END IF;
-
-        -- Update the user's average_score
-        UPDATE users SET average_score = average_weighted WHERE id = user_id;
-    END LOOP;
-
-    CLOSE user_cursor;
-END$$
-
+		SELECT SUM(weight) INTO DEMU FROM projects
+		JOIN corrections ON projects.id=corrections.project_id
+		WHERE corrections.user_id=user_id;
+	
+		IF DEMU <= 0 THEN
+			UPDATE users SET average_score = 0 WHERE id = user_id;
+		ELSE
+			UPDATE users SET average_score = NUM / DEMU WHERE id = user_id;
+		END IF; 
+		SET user_id = user_id + 1;
+	END WHILE;
+END $
 DELIMITER ;
-
