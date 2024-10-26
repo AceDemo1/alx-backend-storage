@@ -14,12 +14,10 @@ BEGIN
 	JOIN corrections ON projects.id=corrections.project_id
 	WHERE corrections.user_id=user_id;
 	
-	UPDATE users
 	IF DEMU <= 0 THEN
-		SET average_score = 0
+		UPDATE users SET average_score = 0 WHERE id = user_id;
 	ELSE
-		SET average_score = NUM / DEMU;
-	END IF;
-	WHERE id = user_id;
+		UPDATE users SET average_score = NUM / DEMU WHERE id = user_id;
+	END IF; 
 END $
 DELIMITER ;
