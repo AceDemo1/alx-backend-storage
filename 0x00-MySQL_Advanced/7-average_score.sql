@@ -1,5 +1,5 @@
 -- create procedure
-DROP PROCEDURE IF EXITS ComputeAverageScoreForUser;
+DROP PROCEDURE IF EXISTS ComputeAverageScoreForUser;
 DELIMITER /
 CREATE PROCEDURE ComputeAverageScoreForUser(IN user_id INT)
 BEGIN
