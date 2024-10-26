@@ -1,3 +1,4 @@
+-- create procedure
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS ComputeAverageWeightedScoreForUser;
