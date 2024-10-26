@@ -34,6 +34,9 @@ BEGIN
         JOIN corrections c ON p.id = c.project_id
         WHERE c.user_id = user_id;
 
+        -- Debugging output
+        SELECT user_id AS 'User ID', NUM AS 'Total Weighted Score', DEMU AS 'Total Weight';
+
         -- Update the user's average_score based on the calculated values
         IF DEMU > 0 THEN
             UPDATE users SET average_score = NUM / DEMU WHERE id = user_id;
