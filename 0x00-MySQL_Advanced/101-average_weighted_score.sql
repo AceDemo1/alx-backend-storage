@@ -1,4 +1,3 @@
--- create procedure
 
 DELIMITER $$
 
