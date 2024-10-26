@@ -1,3 +1,4 @@
+-- create procedure
 DELIMITER $$
 
 CREATE PROCEDURE ComputeAverageWeightedScoreForUsers()
