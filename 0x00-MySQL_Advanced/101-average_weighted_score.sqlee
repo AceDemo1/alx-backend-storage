@@ -8,14 +8,17 @@ CREATE PROCEDURE ComputeAverageWeightedScoreForUser()
 BEGIN
     DECLARE NUM FLOAT;
     DECLARE DEMU FLOAT;
-    DECLARE user_id INT DEFAULT 1;
+    DECLARE i INT DEFAULT 0;
     DECLARE total_users INT DEFAULT 0;
 
     -- Get the total number of users
     SELECT COUNT(*) INTO total_users FROM users;
 
     -- Loop through each user based on their ID
-    WHILE user_id <= total_users DO
+    WHILE i < total_users DO
+	SELECT id INTO user_id FROM users
+	ORDER BY id
+	LIMIT 1 OFFSET i
         -- Calculate the numerator (total weighted score) for the user
         SELECT SUM(score * weight) INTO NUM
         FROM corrections  

@@ -1,47 +1,49 @@
--- Create procedure ComputeAverageWeightedScoreForUser to calculate the average weighted score for each user
+-- Creates a stored procedure ComputeAverageWeightedScoreForUsers that computes and store the average weighted score for all students
+DELIMITER $$
 
-DELIMITER $
+DROP PROCEDURE IF EXISTS ComputeAverageWeightedScoreForUsers;
 
-DROP PROCEDURE IF EXISTS ComputeAverageWeightedScoreForUser;
-
-CREATE PROCEDURE ComputeAverageWeightedScoreForUser()
+CREATE PROCEDURE ComputeAverageWeightedScoreForUsers ()
 BEGIN
-    DECLARE NUM FLOAT;
-    DECLARE DEMU FLOAT;
-    DECLARE i INT DEFAULT 0;
-    DECLARE total_users INT DEFAULT 0;
+    DECLARE user_id INT;
+    DECLARE total_score FLOAT;
+    DECLARE total_weight FLOAT;
+    DECLARE average_weighted FLOAT;
+    DECLARE num_users INT DEFAULT 0;
+    DECLARE current_index INT DEFAULT 0;
 
     -- Get the total number of users
-    SELECT COUNT(*) INTO total_users FROM users;
+    SELECT COUNT(*) INTO num_users FROM users;
 
-    -- Loop through each user based on their ID
-    WHILE i < total_users DO
-	SELECT id INTO user_id FROM users
-	ORDER BY id
-	LIMIT 1 OFFSET i
-        -- Calculate the numerator (total weighted score) for the user
-        SELECT SUM(score * weight) INTO NUM
-        FROM corrections  
-        JOIN projects ON corrections.project_id = projects.id   
-        WHERE corrections.user_id = user_id;
+    WHILE current_index < num_users DO
+        -- Get the user ID for the current index
+        SELECT id INTO user_id
+        FROM users
+        ORDER BY id
+        LIMIT 1 OFFSET current_index;
 
-        -- Calculate the denominator (total weight) for the user
-        SELECT SUM(weight) INTO DEMU
-        FROM projects
-        JOIN corrections ON projects.id = corrections.project_id
-        WHERE corrections.user_id = user_id;
+        -- Calculate total weighted score and total weight for this user
+        SELECT 
+            SUM(c.score * p.weight) INTO total_score,
+            SUM(p.weight) INTO total_weight
+        FROM corrections c
+        JOIN projects p ON c.project_id = p.id
+        WHERE c.user_id = user_id;
 
-        -- Update the user's average_score based on the calculated values
-        IF DEMU <= 0 THEN
-            UPDATE users SET average_score = 0 WHERE id = user_id;  
+        -- Calculate the average weighted score if total_weight is not zero
+        IF total_weight > 0 THEN
+            SET average_weighted = total_score / total_weight;
         ELSE
-            UPDATE users SET average_score = NUM / DEMU WHERE id = user_id;
+            SET average_weighted = 0;
         END IF;
 
-        -- Increment the user_id to proceed to the next user
-        SET user_id = user_id + 1;
+        -- Update the user's average_score
+        UPDATE users SET average_score = average_weighted WHERE id = user_id;
+
+        -- Increment the current index
+        SET current_index = current_index + 1;
     END WHILE;
-END $
+END$$
 
 DELIMITER ;
 
