@@ -1,4 +1,4 @@
--- Creates a stored procedure ComputeAverageWeightedScoreForUsers that computes and store the average weighted score for all students
+-- create procedure
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS ComputeAverageWeightedScoreForUsers;
@@ -6,9 +6,9 @@ DROP PROCEDURE IF EXISTS ComputeAverageWeightedScoreForUsers;
 CREATE PROCEDURE ComputeAverageWeightedScoreForUsers ()
 BEGIN
     DECLARE user_id INT;
-    DECLARE total_score FLOAT;
-    DECLARE total_weight FLOAT;
-    DECLARE average_weighted FLOAT;
+    DECLARE total_score FLOAT DEFAULT 0;
+    DECLARE total_weight FLOAT DEFAULT 0;
+    DECLARE average_weighted FLOAT DEFAULT 0;
     DECLARE num_users INT DEFAULT 0;
     DECLARE current_index INT DEFAULT 0;
 
@@ -22,10 +22,14 @@ BEGIN
         ORDER BY id
         LIMIT 1 OFFSET current_index;
 
+        -- Reset total score and weight for each user
+        SET total_score = 0;
+        SET total_weight = 0;
+
         -- Calculate total weighted score and total weight for this user
         SELECT 
-            SUM(c.score * p.weight) INTO total_score,
-            SUM(p.weight) INTO total_weight
+            COALESCE(SUM(c.score * p.weight), 0) INTO total_score,
+            COALESCE(SUM(p.weight), 0) INTO total_weight
         FROM corrections c
         JOIN projects p ON c.project_id = p.id
         WHERE c.user_id = user_id;
