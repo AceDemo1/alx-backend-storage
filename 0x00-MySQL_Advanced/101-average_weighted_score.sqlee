@@ -40,6 +40,9 @@ BEGIN
 
         -- Increment the user_id to proceed to the next user
         SET i = i + 1;
+	SET NUM = 0;
+	SET DEMU = 0;
+	SET average_score = 0;
     END WHILE;
 END $
 
