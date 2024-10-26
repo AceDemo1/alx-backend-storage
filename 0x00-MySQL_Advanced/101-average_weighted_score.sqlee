@@ -39,7 +39,7 @@ BEGIN
         END IF;
 
         -- Increment the user_id to proceed to the next user
-        SET user_id = user_id + 1;
+        SET i = i + 1;
     END WHILE;
 END $
 
