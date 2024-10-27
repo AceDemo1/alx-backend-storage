@@ -3,4 +3,4 @@
 
 def list_all(mongo_collection):
     """define func"""
-    return [mongo_collection.find()]
+    return list(mongo_collection.find())
