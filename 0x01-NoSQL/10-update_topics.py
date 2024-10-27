@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
-""" pymongo module """
-
+"""insert new docs"""
 
 def update_topics(mongo_collection, name, topics):
-    """ Change school topics """
-    query = {"name": name}
-    update = {"$set": {"topics": topics}}
-    mongo_collection.update_many(query, update)
+    """define func"""
+    mongo_collection.update({ name: name }, { $set { 'topics': topics }})
