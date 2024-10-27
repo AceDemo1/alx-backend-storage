@@ -3,4 +3,4 @@
 
 def insert_school(mongo_collection, **kwargs):
     """define func"""
-    return mongo_collection.insert_one(kwargs)
+    return mongo_collection.insert(kwargs)
