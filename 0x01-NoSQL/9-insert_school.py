@@ -1,8 +1,6 @@
-#!/usr/bin/env python3                                                              
-""" pymongo module """
-
+#!/usr/bin/env python3
+"""insert new docs"""
 
 def insert_school(mongo_collection, **kwargs):
-    """ Insert a document in python """
-    documents = mongo_collection.insert(kwargs)
-    return documents
+    """define func"""
+    return mongo_collection.insert({ kwarg })
