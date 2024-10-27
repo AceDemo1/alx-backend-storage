@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
-""" pymongo module """
-
+"""list docs"""
 
 def list_all(mongo_collection):
-    """ List all documents in Python """
-    documents = mongo_collection.find()
-    if not documents:
-        return []
-    return documents
+    """define func"""
+    return [mongo_collection.find()]
