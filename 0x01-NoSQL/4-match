@@ -1,2 +1,2 @@
-// All matches                                                                       
-db.school.find({name: "Holberton school"})
+// list doc with a particular name
+db.school.find({name: "Holberton school"});
