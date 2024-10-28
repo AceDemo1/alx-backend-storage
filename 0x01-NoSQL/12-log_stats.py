@@ -6,14 +6,13 @@ if __name__ == "__main__":
     client = MongoClient('mongodb://127.0.0.1:27017')
     db = client.logs
     coll = db['nginx']
-    docs = coll.find()
-    print(f'{len(list(docs))} logs\nMethods:\n')
-    get = len(list(coll.find({ 'method': 'GET' })))
-    post = len(list(coll.find({ 'method': 'POST' })))
-    put = len(list(coll.find({ 'method': 'PUT' })))
-    patch = len(list(coll.find({ 'method': 'PATCH' })))
-    delete = len(list(coll.find({ 'method': 'DELETE' })))
-    get_path = len(list(coll.find({ 'method': 'GET', 'path': '/status'})))
+    print(f'{coll.count_documents({})} logs\nMethods:\n')
+    get = len(list(coll.count_documents({ 'method': 'GET' })))
+    post = len(list(coll.count_documents({ 'method': 'POST' })))
+    put = len(list(coll.count_documents({ 'method': 'PUT' })))
+    patch = len(list(coll.count_documents({ 'method': 'PATCH' })))
+    delete = len(list(coll.count_documents({ 'method': 'DELETE' })))
+    get_path = len(list(coll.count_documents({ 'method': 'GET', 'path': '/status'})))
     method_count = {'GET': get, 'POST': post, ' PUT': put, 'PATCH': patch, 'DELETE': delete}
     for method, count in method_count.items():
         print(f'\tMethod {method}: {count}')
