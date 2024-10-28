@@ -6,7 +6,7 @@ if __name__ == "__main__":
     client = MongoClient('mongodb://127.0.0.1:27017')
     db = client.logs
     coll = db['nginx']
-    print(f'{coll.count_documents({})} logs\nMethods:\n')
+    print(f'{coll.count_documents({})} logs\nMethods:')
     get = coll.count_documents({ 'method': 'GET' })
     post = coll.count_documents({ 'method': 'POST' })
     put = coll.count_documents({ 'method': 'PUT' })
@@ -17,4 +17,3 @@ if __name__ == "__main__":
     for method, count in method_count.items():
         print(f'\tmethod {method}: {count}')
     print(f'{get_path} status check')
-
