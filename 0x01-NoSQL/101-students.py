@@ -4,5 +4,7 @@
 
 def top_students(mongo_collection):
     """ Returns all students sorted by average score """
-    
+    docs = mongo_collection.find()
+    for stu in docs:
+        [score for stu.
     return results
