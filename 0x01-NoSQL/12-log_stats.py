@@ -4,17 +4,18 @@ from pymongo import MongoClient
 
 if __name__ == "__main__":
     client = MongoClient('mongodb://127.0.0.1:27017')
-    nginx_collection = client.logs.nginx
+    db = client.logs
+    coll = db['nginx']
+    docs = coll.find()
+    print(f'{len(docs)} logs\nMethods:\n')
+    get = len(list( coll.find({ 'method': 'GET' })))
+    post = len(list( coll.find({ 'method': 'POST' })))
+    put = len(list( coll.find({ 'method': 'PUT' })))
+    patch = len(list( coll.find({ 'method': 'PATCH' })))
+    delete = len(list( coll.find({ 'method': 'DELETE' })))
+    get_path = len(list( coll.find({ 'method': 'GET', 'path': '/status'})))
+    method_count = {'GET': get, 'POST': post, ' PUT': put, 'PATCH': patch, 'DELETE': delete}
+    for method, count in method_count.items():
+        print(f'\tMethod {method}: {count}')
+    print(f'{get_path} status check')
 
-    number_logs = nginx_collection.count_documents({})
-    print("{} logs".format(number_logs))
-
-    print("Methods:")
-    methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
-    for method in methods:
-        count_method = nginx_collection.count_documents({"method": method})
-        print("\tmethod {}: {}".format(method, count_method))
-
-    count_status_check = nginx_collection.count_documents({"method": "GET",
-                                                           "path": "/status"})
-    print("{} status check".format(count_status_check))
