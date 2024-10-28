@@ -7,6 +7,6 @@ def top_students(mongo_collection):
     docs = mongo_collection.find()
     res = []
     for stu in docs:
-        [score for stu.topics:wq
+        [score for stu.topics
 
     return results
