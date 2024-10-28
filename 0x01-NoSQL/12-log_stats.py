@@ -17,3 +17,4 @@ if __name__ == "__main__":
     for method, count in method_count.items():
         print(f'\tmethod {method}: {count}')
     print(f'{get_path} status check')
+
