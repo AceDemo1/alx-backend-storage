@@ -7,7 +7,7 @@ if __name__ == "__main__":
     db = client.logs
     coll = db['nginx']
     docs = coll.find()
-    print(f'{len(docs)} logs\nMethods:\n')
+    print(f'{len(list(docs))} logs\nMethods:\n')
     get = len(list( coll.find({ 'method': 'GET' })))
     post = len(list( coll.find({ 'method': 'POST' })))
     put = len(list( coll.find({ 'method': 'PUT' })))
