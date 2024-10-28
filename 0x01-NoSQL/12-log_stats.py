@@ -15,5 +15,5 @@ if __name__ == "__main__":
     get_path = coll.count_documents({ 'method': 'GET', 'path': '/status'})
     method_count = {'GET': get, 'POST': post, 'PUT': put, 'PATCH': patch, 'DELETE': delete}
     for method, count in method_count.items():
-        print(f'\tMethod {method}: {count}')
+        print(f'\tmethod {method}: {count}')
     print(f'{get_path} status check')
