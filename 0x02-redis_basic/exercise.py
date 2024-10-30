@@ -28,4 +28,8 @@ class Cache:
 
     def get_int(self, key: str) -> Optional[int]:
         """get_int"""
-        return self.get(key, fn=int)
+        val = self.get(key)
+        try:
+            return int(val) if val is not None else None
+        except:
+            return 0
