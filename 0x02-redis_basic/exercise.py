@@ -2,6 +2,8 @@
 """create cache class"""
 import uuid
 import redis
+from typing import Any
+
 
 class Cache:
     def __init__(self):
