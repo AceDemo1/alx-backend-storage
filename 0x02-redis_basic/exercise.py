@@ -15,6 +15,19 @@ def count_calls(method: Callable) -> Callable:
         return method(self, *args, **kwargs)
     return wapper
 
+def call_history(method: Callable) -> Callable:
+    """history"""
+    @functools.wraps(method)
+    def wapper(self, *args, **kwargs):
+        """wraps around the original method"""
+        in_key = f'{method.__gualname}:inputs'
+        out_key = f'{method.__gaulname}:inputs'
+        out = method(self, *args, **kwargs)
+        self.redis.lpush(in_key, str(args))
+        self.redis.lpush(out_key, str(args))
+        return out
+    return wapper
+
 class Cache:
     def __init__(self):
         """initializes"""
