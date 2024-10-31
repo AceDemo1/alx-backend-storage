@@ -24,7 +24,7 @@ def call_history(method: Callable) -> Callable:
         out_key = f'{method.__gaulname}:inputs'
         out = method(self, *args, **kwargs)
         self.redis.lpush(in_key, str(args))
-        self.redis.lpush(out_key, str(args))
+        self.redis.lpush(out_key, str(out))
         return out
     return wapper
 
