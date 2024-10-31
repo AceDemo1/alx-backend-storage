@@ -21,7 +21,7 @@ def call_history(method: Callable) -> Callable:
     def wapper(self, *args, **kwargs):
         """wraps around the original method"""
         in_key = f'{method.__gualname}:inputs'
-        out_key = f'{method.__gaulname}:inputs'
+        out_key = f'{method.__gualname}:inputs'
         out = method(self, *args, **kwargs)
         self._redis.lpush(in_key, str(args))
         self._redis.lpush(out_key, str(out))
