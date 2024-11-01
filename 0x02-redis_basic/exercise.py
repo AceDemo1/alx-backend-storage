@@ -70,5 +70,5 @@ class Cache:
         val = self.get(key)
         try:
             return int(val) if val is not None else None
-        except Exception e:
+        except Exception:
             return 0
