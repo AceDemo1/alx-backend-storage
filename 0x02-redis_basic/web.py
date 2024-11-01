@@ -28,3 +28,9 @@ def count(func: Callable) -> Callable:
         return content
     
     return wrapper
+
+
+@count
+def get_page(url: str) -> str:
+    """obtain HTML content and returns it"""
+    return requests.get(url).text
