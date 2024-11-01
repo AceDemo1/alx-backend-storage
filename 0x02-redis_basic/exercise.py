@@ -15,6 +15,7 @@ def count_calls(method: Callable) -> Callable:
         return method(self, *args, **kwargs)
     return wapper
 
+
 def call_history(method: Callable) -> Callable:
     """history"""
     @functools.wraps(method)
@@ -28,6 +29,7 @@ def call_history(method: Callable) -> Callable:
         return out
     return wapper
 
+
 def replay(method: Callable):
     """display history of calls"""
     func_name = method.__qualname__
@@ -37,15 +39,15 @@ def replay(method: Callable):
     outputs = method.__self__._redis.lrange(out_key, 0, -1)
     print(f"{func_name} was called {len(inputs)} times:")
     for i, j in zip(inputs, outputs):
-        print(f"{func_name}(*{i.decode('utf-8')}) -> {j.decode('utf-8)}")
-    
+        print(f"{func_name}(*{i.decode('utf-8')}) -> {j.decode('utf-8')}")
+
 
 class Cache:
     def __init__(self):
         """initializes"""
         self._redis = redis.Redis()
         self._redis.flushdb()
-    
+
     @call_history
     @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
@@ -68,7 +70,5 @@ class Cache:
         val = self.get(key)
         try:
             return int(val) if val is not None else None
-        except:
+        except Exception e:
             return 0
-
-
