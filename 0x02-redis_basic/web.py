@@ -15,7 +15,7 @@ def count(func: Callable) -> Callable:
         """wrapper func"""
         count_key = f'count:{url}'
         content_key = f'content:{url}'
-        r.incr(count_key)
+        r.incr(count)
         cached = r.get(content_key)
         if cached:
             return cached.decode('utf-8')
