@@ -43,6 +43,7 @@ def replay(method: Callable):
 
 
 class Cache:
+    """class Cache"""
     def __init__(self):
         """initializes"""
         self._redis = redis.Redis()
@@ -56,7 +57,8 @@ class Cache:
         self._redis.set(key, data)
         return key
 
-    def get(self, key: str, fn: Optional[Callable[[bytes], Any]] = None) -> Any:
+    def get(self, key: str,
+            fn: Optional[Callable[[bytes], Any]] = None) -> Any:
         """get value"""
         value = self._redis.get(key)
         return fn(value) if fn else value
