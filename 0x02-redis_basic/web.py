@@ -1,36 +1,51 @@
 #!/usr/bin/env python3
-"""
-web cache and tracker
-"""
+"""web cache and tracker"""
 import requests
 import redis
-from functools import wraps
+from typing import Callable, Any
+import functools
 
-store = redis.Redis()
+r = redis.Redis()
 
 
-def count_url_access(method):
-    """ Decorator counting how many times
-    a URL is accessed """
-    @wraps(method)
-    def wrapper(url):
-        cached_key = "cached:" + url
-        cached_data = store.get(cached_key)
-        if cached_data:
-            return cached_data.decode("utf-8")
-
-        count_key = "count:" + url
-        html = method(url)
-
-        store.incr(count_key)
-        store.set(cached_key, html)
-        store.expire(cached_key, 10)
-        return html
+def count(func: Callable) -> Callable:
+    """count response"""
+    @functools.wraps(func)
+    def wrapper(url: str) -> Any:
+        """wrapper func"""
+        count_key = f'count:{url}'
+        content_key = f'content:{url}'
+        r.incr(count_key)
+        cached = r.get(content_key)
+        if cached:
+            return cached.decode('utf-8')
+        content = func(url)
+        r.setex(content_key, 10, content)
+        return content
     return wrapper
 
 
-@count_url_access
+@count
 def get_page(url: str) -> str:
-    """ Returns HTML content of a url """
-    res = requests.get(url)
-    return res.text
+    """obtain HTML content and returns it"""
+    return requests.get(url).text
+
+# URL with a 5-second delay
+url = "http://slowwly.robertomurray.co.uk/delay/5000/url/http://example.com"
+# Clear any existing Redis keys for a fresh test
+r.delete(f"count:{url}", f"content:{url}")
+
+# First call - should take 5 seconds
+print("Fetching URL (first call, should be slow)...")
+print(get_page(url))  # This call will be delayed due to the slow response simulation
+
+# Check the count after the first call
+print("Access count after first call:", int(r.get(f"count:{url}").decode('utf-8')))  # Expected: 1
+
+# Second call - should be fast due to caching
+print("Fetching URL again (second call, should be fast)...")
+print(get_page(url))  # This should be quick if cached properly
+
+# Check the count after the second call
+print("Access count after second call:", int(r.get(f"count:{url}").decode('utf-8')))  # Expected: 2
+
