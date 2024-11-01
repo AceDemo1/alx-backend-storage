@@ -1,36 +1,31 @@
 #!/usr/bin/env python3
-"""web cache and tracker"""
-import requests
+""" Web cache and tracker """
 import redis
+import requests
+from functools import wraps
 from typing import Callable, Any
-import functools
 
 r = redis.Redis()
 
-def count(func: Callable) -> Callable:
-    """Count and cache response"""
-    @functools.wraps(func)
-    def wrapper(url: str) -> Any:
-        count_key = f'count:{url}'
-        content_key = f'content:{url}'
-        
-        # Increment the call count
-        r.incr(count_key)
-        
-        # Check cache for existing content
-        cached = r.get(content_key)
-        if cached:
-            return cached.decode('utf-8')
-        
-        # Fetch content and cache with a 10-second expiration
-        content = func(url)
-        r.setex(content_key, 10, content)
-        return content
-    
+
+def tracker(method: Callable) -> Callable:
+    """ Track and cache the result with an expiration time """
+    @wraps(method)
+    def wrapper(url) -> Any:
+        """ Wrapper method """
+        count = f'count:{url}'
+        cache = f'cached:{url}'
+
+        r.incr(count)
+        r.expire(cache, 10)
+
+        return method(url)
+
     return wrapper
 
 
-@count
+@tracker
 def get_page(url: str) -> str:
-    """obtain HTML content and returns it"""
-    return requests.get(url).text
+    """ Track how many times a particular URL was accessed """
+    response = requests.get(url)
+    return response.text
