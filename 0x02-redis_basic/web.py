@@ -5,7 +5,9 @@ from typing import Callable, Any
 import functools
 
 r = redis.Redis()
-def coun(func: Callable) -> Callable:
+
+
+def count(func: Callable) -> Callable:
     """count response"""
     @functools.wraps(func)
     def wrapper(url: str) -> Any:
@@ -20,6 +22,7 @@ def coun(func: Callable) -> Callable:
         r.setex(content_key, 10, content)
         return content
     return wrapper
+
 
 @count
 def get_page(url: str) -> str:
