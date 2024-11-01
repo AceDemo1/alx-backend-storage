@@ -28,6 +28,18 @@ def call_history(method: Callable) -> Callable:
         return out
     return wapper
 
+def replay(method: Callable):
+    """display history of calls"""
+    func_name = method.__qualname__
+    in_key = f'{method.__qualname__}:inputs'
+    out_key = f'{method.__qualname__}:outputs'
+    inputs = method.__self__._redis.lrange(in_key, 0, -1)
+    outputs = method.__self__._redis.lrange(out_key, 0, -1)
+    print(f"{func_name} was called {len(inputs)} times:")
+    for i, j in zip(inputs, outputs):
+        print(f"{func_name}(*{i.decode('utf-8')}) -> {j.decode('utf-8)}")
+    
+
 class Cache:
     def __init__(self):
         """initializes"""
